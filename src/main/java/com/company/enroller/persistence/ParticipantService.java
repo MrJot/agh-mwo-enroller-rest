@@ -32,4 +32,11 @@ public class ParticipantService {
 		transaction.commit();
 	}
 
+	public void deleteParticipant(Participant participant) {
+		Transaction transaction = connector.getSession().beginTransaction();
+		connector.getSession().delete(participant);
+		transaction.commit();
+		
+	}
+
 }
