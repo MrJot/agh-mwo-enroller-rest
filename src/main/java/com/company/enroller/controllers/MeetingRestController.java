@@ -70,10 +70,10 @@ public class MeetingRestController {
 	public ResponseEntity<?> addParticipantToTheMeeting(@PathVariable("id") long meetingId,
 			@RequestBody Participant participant){
 		Meeting meeting = meetingService.findById(meetingId);
-		if (meetingService.hasParticipant(participant, meetingId) != null) {
-			return new ResponseEntity("Unable to add Participant. Participant with login: " + 
-					participant.getLogin() + " already enrolled to the meeting.", HttpStatus.CONFLICT);
-		}
+			if (meetingService.hasParticipant(participant, meetingId)) {
+				return new ResponseEntity("Unable to add Participant. Participant with login: " + 
+						participant.getLogin() + " already enrolled to the meeting.", HttpStatus.CONFLICT);
+			}
 		meetingService.addParticipantToTheMeeting(meeting, participant);
 		return new ResponseEntity<Meeting>(meeting, HttpStatus.OK);
 	}

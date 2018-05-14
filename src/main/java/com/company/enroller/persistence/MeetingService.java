@@ -41,10 +41,16 @@ public class MeetingService {
 		transaction.commit();
 	}
 
-	public Participant hasParticipant(Participant participant, long meetingId) {
-		String hql = "SELECT s FROM Meeting s LEFT JOIN s.participant participant WHERE participant.login="+participant.getLogin();//+" AND s.id="+meetingId;
+	public boolean hasParticipant(Participant participant, long meetingId) {
+		String partLogin = participant.getLogin();
+		String hql = "SELECT p FROM Meeting p JOIN p.participants c WHERE c.login='"+partLogin+"' AND p.id="+meetingId;
 		Query query = connector.getSession().createQuery(hql);
-		return (Participant)query.list().get(0);
+		if(query.list().size()!=0) {
+			return true;
+		}
+		return false;
 	}
+	
+
 
 }
