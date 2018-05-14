@@ -1,6 +1,7 @@
 package com.company.enroller.persistence;
 
 import java.util.Collection;
+import java.util.HashSet;
 
 import org.hibernate.Query;
 import org.hibernate.Transaction;
@@ -40,6 +41,17 @@ public class MeetingService {
 		connector.getSession().save(meeting);
 		transaction.commit();
 	}
+	
+	public boolean ifthereIsAMeeting(long meetingId) {
+		String hql = "FROM Meeting p WHERE p.id="+meetingId;
+		Query query = connector.getSession().createQuery(hql);
+		Collection<Meeting> meeting = query.list();
+		if(meeting.size()==0) {
+			return false;
+		}
+		return true;
+		
+	}
 
 	public boolean hasParticipant(Participant participant, long meetingId) {
 		String partLogin = participant.getLogin();
@@ -49,6 +61,17 @@ public class MeetingService {
 			return true;
 		}
 		return false;
+	}
+	
+	public Collection<String> usersEnrolledToTheMeeting(long meetingId){
+		String hql = "SELECT p FROM Participant p JOIN p.meetings c WHERE c.id="+meetingId;
+		Query query = connector.getSession().createQuery(hql);
+		Collection<Participant> list = query.list();
+		Collection<String> participantNames = new HashSet<>();
+		for (Participant part:list) {
+			participantNames.add(part.getLogin());
+		}
+		return participantNames;
 	}
 	
 

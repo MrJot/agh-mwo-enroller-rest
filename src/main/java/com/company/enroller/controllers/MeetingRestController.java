@@ -22,7 +22,9 @@ Pobieranie listy wszystkich spotkań ----DONE
 Pobieranie listy pojedyncznego spotkania ----DONE
 Dodawanie spotkań ---DONE
 Dodawanie uczestnika do spotkania ---DONE
-Pobieranie uczestników spotkania
+Pobieranie uczestników spotkania ---DONE
+
+
  */
 
 @RestController
@@ -78,19 +80,20 @@ public class MeetingRestController {
 		return new ResponseEntity<Meeting>(meeting, HttpStatus.OK);
 	}
 	
-/*	
-	@RequestMapping(value = "/{id}/{login}", method = RequestMethod.GET)
-	public ResponseEntity<?> showParticipantEnrolledToTheMeeting(@PathVariable("id") long meetingId,
-			@PathVariable("login") String login){
+
+	@RequestMapping(value = "/{id}/enrolledUsers", method = RequestMethod.GET)
+	public ResponseEntity<?> showParticipantEnrolledToTheMeeting(@PathVariable("id") long meetingId){
 		Meeting meeting = meetingService.findById(meetingId);
-		if (meetingService.hasParticipant(participant, meetingId) != null) {
-			return new ResponseEntity("Unable to add Participant. Participant with login: " + 
-					participant.getLogin() + " already enrolled to the meeting.", HttpStatus.CONFLICT);
+		Collection<String> participantList = meetingService.usersEnrolledToTheMeeting(meetingId);
+		if(meetingService.ifthereIsAMeeting(meetingId)==false) {
+			return new ResponseEntity("Meeting with specified id does not exists", HttpStatus.BAD_REQUEST);
 		}
-		meetingService.addParticipantToTheMeeting(meeting, participant);
-		return new ResponseEntity<Meeting>(meeting, HttpStatus.OK);
+		if (participantList.isEmpty()) {
+			return new ResponseEntity("There are no users enrolled to this meeting", HttpStatus.BAD_REQUEST);
+		}
+		return new ResponseEntity<Collection<String>>(participantList, HttpStatus.OK);
 	}
 	
 	
-*/
+
 }
