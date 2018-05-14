@@ -24,7 +24,11 @@ Dodawanie spotkań ---DONE
 Dodawanie uczestnika do spotkania ---DONE
 Pobieranie uczestników spotkania ---DONE
 
+Wersja GOLD (dodatkowo do BASIC)
 
+Usuwanie spotkań ---DONE
+Aktualizację spotkań ---DONE
+Usuwanie uczestnika ze spotkania
  */
 
 @RestController
@@ -92,6 +96,32 @@ public class MeetingRestController {
 			return new ResponseEntity("There are no users enrolled to this meeting", HttpStatus.BAD_REQUEST);
 		}
 		return new ResponseEntity<Collection<String>>(participantList, HttpStatus.OK);
+	}
+	
+	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
+	public ResponseEntity<?> deleteMeeting(@PathVariable("id") long meetingId){
+		Meeting meeting = meetingService.findById(meetingId);
+		if (meeting == null) {
+			return new ResponseEntity(HttpStatus.NOT_FOUND);
+		}
+		meetingService.deleteMeeting(meeting);
+		return new ResponseEntity<Meeting>(meeting, HttpStatus.OK);
+	}
+	
+	@RequestMapping(value = "/{id}", method = RequestMethod.PUT)
+	public ResponseEntity<?> modifyPMeeting(@PathVariable("id") long meetingId, @RequestBody Meeting updatedMeeting){
+		Meeting meeting = meetingService.findById(meetingId);
+		if (meeting == null) {
+			return new ResponseEntity(HttpStatus.NOT_FOUND);
+		}
+		meeting.setDate(updatedMeeting.getDate());
+		meeting.setDescription(updatedMeeting.getDescription());
+		meeting.setTitle(updatedMeeting.getTitle());
+		meetingService.modifyMeeting(meeting);
+
+		return new ResponseEntity<Meeting>(meeting, HttpStatus.OK);
+//Added comments
+
 	}
 	
 	
