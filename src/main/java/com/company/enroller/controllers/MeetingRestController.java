@@ -1,6 +1,7 @@
 package com.company.enroller.controllers;
 
 import java.util.Collection;
+import java.util.HashSet;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -9,6 +10,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.company.enroller.model.Meeting;
@@ -88,14 +90,20 @@ public class MeetingRestController {
 	@RequestMapping(value = "/{id}/enrolledUsers", method = RequestMethod.GET)
 	public ResponseEntity<?> showParticipantEnrolledToTheMeeting(@PathVariable("id") long meetingId){
 		Meeting meeting = meetingService.findById(meetingId);
-		Collection<String> participantList = meetingService.usersEnrolledToTheMeeting(meetingId);
+		Collection<Participant> participantList = meetingService.usersEnrolledToTheMeeting(meetingId);
 		if(meetingService.ifthereIsAMeeting(meetingId)==false) {
 			return new ResponseEntity("Meeting with specified id does not exists", HttpStatus.BAD_REQUEST);
 		}
 		if (participantList.isEmpty()) {
 			return new ResponseEntity("There are no users enrolled to this meeting", HttpStatus.BAD_REQUEST);
 		}
-		return new ResponseEntity<Collection<String>>(participantList, HttpStatus.OK);
+		
+		Collection<String> userNames = new HashSet<>();
+		for (Participant part:participantList) {
+			userNames.add(part.getLogin());
+		}
+		
+		return new ResponseEntity<Collection<String>>(userNames, HttpStatus.OK);
 	}
 	
 	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
@@ -123,6 +131,24 @@ public class MeetingRestController {
 //Added comments
 
 	}
+	
+	
+	@RequestMapping(value = "/{id}/{login}", method = RequestMethod.DELETE)
+	public ResponseEntity<?> deleteUserFromTheMeeting( @PathVariable ("id") long meetingId, @PathVariable("login") String login){
+		Meeting meeting = meetingService.findById(meetingId);
+		Collection<Participant> participantList = meetingService.usersEnrolledToTheMeeting(meetingId);
+		if (meeting == null) {
+			return new ResponseEntity(HttpStatus.NOT_FOUND);
+		}
+		if(participantList.isEmpty()) {
+			return new ResponseEntity(HttpStatus.NOT_FOUND);
+		}
+		
+		meetingService.deleteUsersFromTheMeeting(participantList);
+		return new ResponseEntity<Meeting>(meeting, HttpStatus.OK);
+	}
+	
+
 	
 	
 

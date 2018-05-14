@@ -63,15 +63,13 @@ public class MeetingService {
 		return false;
 	}
 	
-	public Collection<String> usersEnrolledToTheMeeting(long meetingId){
+	
+	
+	public Collection<Participant> usersEnrolledToTheMeeting(long meetingId){
 		String hql = "SELECT p FROM Participant p JOIN p.meetings c WHERE c.id="+meetingId;
 		Query query = connector.getSession().createQuery(hql);
 		Collection<Participant> list = query.list();
-		Collection<String> participantNames = new HashSet<>();
-		for (Participant part:list) {
-			participantNames.add(part.getLogin());
-		}
-		return participantNames;
+		return list;
 	}
 	
 	public void deleteMeeting(Meeting meeting) {
@@ -84,6 +82,11 @@ public class MeetingService {
 		Transaction transaction = connector.getSession().beginTransaction();
 		connector.getSession().update(meeting);
 		transaction.commit();
+		
+	}
+
+	public void deleteUsersFromTheMeeting(Collection<Participant> participantList) {
+		Transaction transaction = connector.getSession().beginTransaction();
 		
 	}
 	
