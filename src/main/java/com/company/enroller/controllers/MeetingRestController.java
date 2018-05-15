@@ -128,25 +128,11 @@ public class MeetingRestController {
 		meetingService.modifyMeeting(meeting);
 
 		return new ResponseEntity<Meeting>(meeting, HttpStatus.OK);
-//Added comments
 
 	}
 	
 	
-	@RequestMapping(value = "/{id}/{login}", method = RequestMethod.DELETE)
-	public ResponseEntity<?> deleteUserFromTheMeeting( @PathVariable ("id") long meetingId, @PathVariable("login") String login){
-		Meeting meeting = meetingService.findById(meetingId);
-		Collection<Participant> participantList = meetingService.usersEnrolledToTheMeeting(meetingId);
-		if (meeting == null) {
-			return new ResponseEntity(HttpStatus.NOT_FOUND);
-		}
-		if(participantList.isEmpty()) {
-			return new ResponseEntity(HttpStatus.NOT_FOUND);
-		}
-		
-		meetingService.deleteUsersFromTheMeeting(participantList);
-		return new ResponseEntity<Meeting>(meeting, HttpStatus.OK);
-	}
+
 	
 
 	

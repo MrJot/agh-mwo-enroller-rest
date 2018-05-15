@@ -85,10 +85,7 @@ public class MeetingService {
 		
 	}
 
-	public void deleteUsersFromTheMeeting(Collection<Participant> participantList) {
-		Transaction transaction = connector.getSession().beginTransaction();
-		
-	}
+
 	
 
 
